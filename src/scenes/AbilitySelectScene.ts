@@ -14,14 +14,14 @@ interface AbilitySelectData {
 }
 
 export class AbilitySelectScene extends Phaser.Scene {
-  private data!: AbilitySelectData;
+  private sceneData!: AbilitySelectData;
 
   constructor() {
     super('AbilitySelectScene');
   }
 
   init(data: AbilitySelectData) {
-    this.data = data;
+    this.sceneData = data;
   }
 
   create() {
@@ -41,10 +41,10 @@ export class AbilitySelectScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     // ボーナス表示
-    if (this.data.hpBonus || this.data.stageBonus) {
+    if (this.sceneData.hpBonus || this.sceneData.stageBonus) {
       const parts: string[] = [];
-      if (this.data.hpBonus) parts.push(`HP x${this.data.hp} = +${this.data.hpBonus}`);
-      if (this.data.stageBonus) parts.push(`STAGE BONUS +${this.data.stageBonus}`);
+      if (this.sceneData.hpBonus) parts.push(`HP x${this.sceneData.hp} = +${this.sceneData.hpBonus}`);
+      if (this.sceneData.stageBonus) parts.push(`STAGE BONUS +${this.sceneData.stageBonus}`);
       this.add
         .text(width / 2, height * 0.13, parts.join('  ·  '), {
           fontFamily: 'Menlo, monospace',
@@ -55,9 +55,9 @@ export class AbilitySelectScene extends Phaser.Scene {
     }
 
     // MISSED表示
-    if (this.data.missedCount && this.data.missedCount > 0) {
+    if (this.sceneData.missedCount && this.sceneData.missedCount > 0) {
       this.add
-        .text(width / 2, height * 0.155, `MISSED ${this.data.missedCount}  (-${this.data.missedCount * 5} PENALTY)`, {
+        .text(width / 2, height * 0.155, `MISSED ${this.sceneData.missedCount}  (-${this.sceneData.missedCount * 5} PENALTY)`, {
           fontFamily: 'Menlo, monospace',
           fontSize: '10px',
           color: '#999'
@@ -74,7 +74,7 @@ export class AbilitySelectScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     // 重複回避: 既に取得済みの stackable=false は除外
-    const pool = ABILITIES.filter((ab) => isAbilityAvailable(ab, this.data.stats));
+    const pool = ABILITIES.filter((ab) => isAbilityAvailable(ab, this.sceneData.stats));
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
     const picks: AbilityDef[] = shuffled.slice(0, 3);
     // プール不足時（ほぼ起きないが一応）: 重複OKで埋める
@@ -125,7 +125,7 @@ export class AbilitySelectScene extends Phaser.Scene {
       .text(
         width / 2,
         startY + totalH + 28,
-        `SCORE ${this.data.score}   ·   NEXT: STAGE ${this.data.stageIndex}`,
+        `SCORE ${this.sceneData.score}   ·   NEXT: STAGE ${this.sceneData.stageIndex}`,
         {
           fontFamily: 'Menlo, monospace',
           fontSize: '12px',
@@ -137,11 +137,11 @@ export class AbilitySelectScene extends Phaser.Scene {
 
   private selectAbility(ab: AbilityDef) {
     sound.playPickup();
-    const newStats = { ...this.data.stats };
+    const newStats = { ...this.sceneData.stats };
     ab.apply(newStats);
     // extra_hp は取得時に回復もする
     const newHp = Math.min(
-      this.data.hp + (ab.id === 'extra_hp' ? 1 : 0),
+      this.sceneData.hp + (ab.id === 'extra_hp' ? 1 : 0),
       newStats.maxHp
     );
 
@@ -150,8 +150,8 @@ export class AbilitySelectScene extends Phaser.Scene {
     this.scene.start('GameScene', {
       stats: newStats,
       hp: newHp,
-      score: this.data.score,
-      stageIndex: this.data.stageIndex
+      score: this.sceneData.score,
+      stageIndex: this.sceneData.stageIndex
     });
   }
 }
