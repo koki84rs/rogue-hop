@@ -1,0 +1,19 @@
+{
+  "name": "rogue-hop",
+  "version": "0.0.1",
+  "description": "Minimalist roguelite jump action for mobile web",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "phaser": "^3.80.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}
